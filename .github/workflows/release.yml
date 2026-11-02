@@ -124,7 +124,10 @@ jobs:
       - name: Package and publish
         if: steps.version.outputs.skip != 'true'
         env:
+          # packager@v2 reads GITHUB_OAUTH / CF_API_KEY; newer builds read GH_API_TOKEN / CF_API_TOKEN. Set both.
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
           GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_KEY: ${{ secrets.CF_API_TOKEN }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
           CF_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}

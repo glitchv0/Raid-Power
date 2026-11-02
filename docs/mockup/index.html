@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RaidPower – UI Mock-up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#f5b942; --accent-dim:rgba(245,185,66,.18);
+  --bg:#0e1014; --panel:rgba(16,18,23,.94); --panel2:#15181e; --line:rgba(255,255,255,.06);
+  --text:#e8e9ec; --muted:#8a8f99; --faint:#555b66;
+  --ok:#3ddc84; --warn:#ffb020; --bad:#ff4d4f; --oor:#6b7280; --unk:#7c8aa5;
+  --hdr:'Barlow Condensed',sans-serif; --body:'Inter',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#07080a;color:var(--text);font-family:var(--body);font-size:13px}
+header.page{padding:22px 32px 10px;display:flex;align-items:center;gap:24px;border-bottom:1px solid var(--line)}
+header.page h1{font-family:var(--hdr);font-size:30px;letter-spacing:2px;margin:0}
+header.page h1 b{color:var(--accent)}
+header.page .sub{color:var(--muted)}
+.swatches{margin-left:auto;display:flex;gap:8px;align-items:center;color:var(--muted)}
+.sw{width:20px;height:20px;border-radius:4px;border:1px solid #000;cursor:pointer;outline:1px solid var(--line)}
+.sw.on{outline:2px solid #fff}
+section{padding:20px 32px}
+section>h2{font-family:var(--hdr);font-weight:600;font-size:20px;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 4px;color:#fff}
+section>p.note{color:var(--muted);margin:0 0 16px;max-width:980px;line-height:1.5}
+/* fake game scene */
+.scene{position:relative;border-radius:8px;overflow:hidden;border:1px solid #000;min-height:560px;
+  background:radial-gradient(ellipse at 30% 20%,#3b4a3a 0%,#1d2a22 35%,#0e1512 70%),#0e1512;}
+.scene:before{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 75% 70%,rgba(255,170,80,.12),transparent 40%),
+  repeating-linear-gradient(115deg,rgba(255,255,255,.015) 0 2px,transparent 2px 9px)}
+.scene .tag{position:absolute;left:12px;bottom:10px;color:rgba(255,255,255,.35);font-size:11px;font-family:var(--hdr);letter-spacing:1px}
+/* ---------- icons ---------- */
+.ic{position:relative;width:36px;height:36px;border:1px solid #000;background:#000;flex:none}
+.ic img{width:100%;height:100%;display:block;object-fit:cover;transform:scale(1.14)}
+.ic .wrap{position:absolute;inset:0;overflow:hidden}
+.ic .t{position:absolute;left:0;right:0;bottom:-1px;text-align:center;font-family:var(--hdr);font-weight:700;font-size:13px;color:#fff;
+  text-shadow:0 0 2px #000,0 0 2px #000,1px 1px 0 #000}
+.ic .n{position:absolute;right:-5px;top:-6px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--bad);color:#fff;
+  font:700 11px/16px var(--hdr);text-align:center;border:1px solid #000;z-index:2}
+.ic .n.warn{background:var(--warn);color:#111}
+.ic .cls{position:absolute;left:-1px;top:-1px;width:14px;height:14px;border:1px solid #000;z-index:2}
+.ic .cls img{transform:scale(1.2)}
+.ic .st{position:absolute;left:-1px;right:-1px;bottom:-5px;height:3px;background:var(--ok);border:1px solid #000;border-top:0}
+.ic.warn .st{background:var(--warn)} .ic.bad .st{background:var(--bad)} .ic.oor .st{background:var(--oor)} .ic.unk .st{background:var(--unk)}
+.ic.bad{box-shadow:0 0 0 1px rgba(255,77,79,.55),0 0 10px rgba(255,77,79,.35)}
+.ic.oor img{filter:grayscale(1) brightness(.55)}
+.ic.unk img{filter:saturate(.35) brightness(.7)}
+.ic.unk:after{content:"?";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 16px var(--hdr);color:#cfd8ea;text-shadow:0 0 3px #000}
+.ic.lg{width:44px;height:44px}
+.ic.sm{width:24px;height:24px} .ic.sm .t{font-size:11px}
+.ic.xs{width:18px;height:18px}
+.ic.off img{filter:grayscale(1) brightness(.35)}
+/* ---------- HUD bar ---------- */
+.hud{position:absolute;background:rgba(10,11,14,.78);border:1px solid #000;box-shadow:inset 0 0 0 1px var(--line);padding:8px;border-radius:3px}
+.hud .hh{display:flex;align-items:center;gap:6px;font:600 12px var(--hdr);letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:-2px 0 8px}
+.hud .hh .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.hud .hh b{color:var(--accent);font-weight:700}
+.hud .hh .r{margin-left:auto;color:var(--faint)}
+.row{display:flex;gap:6px;align-items:flex-end}
+.col{display:flex;flex-direction:column;align-items:center;gap:7px}
+.lbl{font:600 11px var(--hdr);letter-spacing:.6px;text-transform:uppercase;margin-top:3px}
+.sep{width:1px;align-self:stretch;background:var(--line);margin:0 4px}
+.flyout{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:200px;background:var(--panel);border:1px solid #000;
+  box-shadow:inset 0 0 0 1px var(--line),0 8px 24px rgba(0,0,0,.6);padding:6px;border-radius:3px;z-index:5}
+.flyout .fh{font:600 12px var(--hdr);letter-spacing:1px;text-transform:uppercase;padding:2px 4px 6px;border-bottom:1px solid var(--line);margin-bottom:4px;display:flex}
+.flyout .fh span{margin-left:auto;color:var(--muted)}
+.pl{display:flex;align-items:center;gap:6px;padding:3px 4px;border-radius:2px}
+.pl:hover{background:rgba(255,255,255,.05)}
+.pl .nm{flex:1} .pl .tm{font:600 13px var(--hdr)}
+.pl .bar{position:relative;height:2px;background:rgba(255,255,255,.07);flex:0 0 46px}
+.pl .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--ok)}
+.grp{display:grid;grid-template-columns:repeat(8,28px);gap:4px}
+.gp{height:24px;border:1px solid #000;background:#1b1f26;display:flex;align-items:center;justify-content:center;font:700 12px var(--hdr);
+  color:var(--text);position:relative}
+.gp:after{content:"";position:absolute;left:-1px;right:-1px;bottom:-4px;height:3px;background:var(--ok);border:1px solid #000;border-top:0}
+.gp.warn:after{background:var(--warn)} .gp.bad:after{background:var(--bad)}
+.gp.bad{color:#ffd2d2} .gp.mine{box-shadow:inset 0 0 0 1px var(--accent)}
+.gp.na{opacity:.28} .gp.na:after{background:#333}
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.brow .bn{width:64px;font:600 12px var(--hdr);letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.smart{display:flex;align-items:center;gap:10px;padding:6px 10px 6px 6px;background:linear-gradient(90deg,var(--accent-dim),transparent 80%);
+  border:1px solid #000;box-shadow:inset 0 0 0 1px var(--line);border-radius:3px;cursor:pointer}
+.smart .k{font:700 11px var(--hdr);color:#111;background:var(--accent);padding:1px 5px;border-radius:2px}
+.smart .a{font:700 15px var(--hdr);letter-spacing:.4px} .smart .b{color:var(--muted);font-size:12px}
+/* ---------- main window ---------- */
+.win{width:960px;height:590px;background:var(--panel);border:1px solid #000;box-shadow:inset 0 0 0 1px var(--line),0 20px 60px rgba(0,0,0,.65);
+  border-radius:4px;display:grid;grid-template-columns:190px 1fr;grid-template-rows:44px 1fr 28px;overflow:hidden;position:relative}
+.tb{grid-column:1/3;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)}
+.logo{width:24px;height:24px;border-radius:5px;background:linear-gradient(135deg,var(--accent),#7a4f0f);display:flex;align-items:center;justify-content:center;
+  font:700 15px var(--hdr);color:#111;border:1px solid #000}
+.tb .ttl{font:700 18px var(--hdr);letter-spacing:2px} .tb .ttl b{color:var(--accent)}
+.tb .ctx{color:var(--muted);font-size:12px;margin-left:6px}
+.tb .x{margin-left:auto;display:flex;gap:6px}
+.tb .x span{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--muted);border-radius:3px;cursor:pointer}
+.tb .x span:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav{border-right:1px solid var(--line);padding:10px 8px;background:rgba(0,0,0,.18)}
+.nav .sec{font:600 11px var(--hdr);color:var(--faint);letter-spacing:1.5px;text-transform:uppercase;padding:10px 10px 4px}
+.nav a{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:3px;color:#c6c9cf;cursor:pointer;position:relative}
+.nav a:hover{background:rgba(255,255,255,.04);color:#fff}
+.nav a.on{background:var(--accent-dim);color:#fff}
+.nav a.on:before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--accent)}
+.nav a .ic{width:18px;height:18px}
+.nav a .badge{margin-left:auto;font:700 11px var(--hdr);background:var(--bad);color:#fff;border-radius:7px;padding:0 5px}
+.main{padding:14px 16px;overflow:auto}
+.ft{grid-column:1/3;border-top:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 12px;color:var(--faint);font-size:11px}
+.ft .sync{display:flex;align-items:center;gap:6px;color:var(--muted)} .ft .sync i{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.page{display:none} .page.on{display:block}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ph h3{margin:0;font:700 20px var(--hdr);letter-spacing:1px;text-transform:uppercase}
+.ph .grow{flex:1}
+.btn{font:600 12px var(--hdr);letter-spacing:1px;text-transform:uppercase;padding:6px 11px;border:1px solid #000;background:#1d2128;color:#dfe2e7;border-radius:3px;cursor:pointer;
+  box-shadow:inset 0 0 0 1px var(--line)}
+.btn:hover{background:#252a33} .btn.pri{background:var(--accent);color:#141414;box-shadow:none}
+.seg{display:inline-flex;border:1px solid #000;border-radius:3px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
+.seg span{padding:5px 11px;font:600 12px var(--hdr);letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;gap:6px;align-items:center}
+.seg span.on{background:var(--accent-dim);color:#fff}
+.seg .ic{width:16px;height:16px}
+table.mx{border-collapse:separate;border-spacing:0;width:100%}
+.mx th{font:600 11px var(--hdr);letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:6px 4px;text-align:center;border-bottom:1px solid var(--line)}
+.mx th.l,.mx td.l{text-align:left}
+.mx td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:center}
+.mx tr:hover td{background:rgba(255,255,255,.02)}
+.mx th .ic{margin:0 auto 4px;width:22px;height:22px}
+.mx td .ic{margin:0 auto;cursor:pointer}
+.who{display:flex;align-items:center;gap:8px}
+.who .ic{margin:0!important}
+.who .nm{font-weight:600}
+.who .sub{color:var(--faint);font-size:11px}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block}
+.sdot.no{background:var(--faint)} .sdot.old{background:var(--warn)}
+.chip3{display:flex;gap:3px;justify-content:center}
+.chip3 .ic{width:20px;height:20px;cursor:pointer}
+.cardgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{background:var(--panel2);border:1px solid #000;box-shadow:inset 0 0 0 1px var(--line);border-radius:3px;padding:8px}
+.card .ch{display:flex;font:700 13px var(--hdr);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;color:var(--muted)}
+.card .ch span{margin-left:auto;color:var(--ok)} .card .ch span.b{color:var(--bad)}
+.mem{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px}
+.mem .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.dots{display:flex;gap:2px}
+.dots i{width:9px;height:9px;border:1px solid #000;background:var(--ok)}
+.dots i.m{background:var(--bad)} .dots i.w{background:var(--warn)} .dots i.x{background:#2a2e36}
+.sum{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px}
+.sum .s{background:var(--panel2);border:1px solid #000;box-shadow:inset 0 0 0 1px var(--line);border-radius:3px;padding:8px;display:flex;gap:8px;align-items:center}
+.sum .s .v{font:700 18px var(--hdr)} .sum .s .k{color:var(--muted);font-size:11px}
+.sum .meter{height:3px;background:#2a2e36;margin-top:4px} .sum .meter i{display:block;height:100%;background:var(--ok)}
+.opt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.og{background:var(--panel2);border:1px solid #000;box-shadow:inset 0 0 0 1px var(--line);border-radius:3px;padding:10px 12px}
+.og h4{margin:0 0 8px;font:700 14px var(--hdr);letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
+.or{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.or:last-child{border:0}
+.or .d{color:var(--faint);font-size:11px}
+.tog{margin-left:auto;width:30px;height:16px;border-radius:8px;background:#2b3039;position:relative;cursor:pointer;border:1px solid #000}
+.tog:after{content:"";position:absolute;left:2px;top:2px;width:10px;height:10px;border-radius:50%;background:#888;transition:.15s}
+.tog.on{background:var(--accent)} .tog.on:after{left:16px;background:#111}
+.sl{margin-left:auto;width:140px;height:4px;background:#2b3039;position:relative;border-radius:2px}
+.sl i{position:absolute;left:0;top:0;bottom:0;width:55%;background:var(--accent);border-radius:2px}
+.sl b{position:absolute;left:55%;top:-5px;width:12px;height:12px;border-radius:50%;background:#fff;border:1px solid #000;margin-left:-6px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted)}
+.legend div{display:flex;align-items:center;gap:8px}
+.hint{color:var(--faint);font-size:11px;margin-top:8px}
+.two{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.cap{font:600 12px var(--hdr);letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+</style>
+</head>
+<body>
+
+<header class="page">
+  <h1>RAID<b>POWER</b></h1>
+  <div class="sub">UI mock-up v1 · universal raid buff manager for WoW: Forever · synthetic data</div>
+  <div class="swatches">Accent
+    <div class="sw on" style="background:#f5b942" data-c="#f5b942"></div>
+    <div class="sw" style="background:#0cd29f" data-c="#0cd29f"></div>
+    <div class="sw" style="background:#0091ed" data-c="#0091ed"></div>
+    <div class="sw" style="background:#a78bfa" data-c="#a78bfa"></div>
+  </div>
+</header>
+
+<!-- =============================================================== HUD -->
+<section>
+  <h2>1 · In-game buff bars</h2>
+  <p class="note">The bar shows only what <i>you</i> are responsible for, so each class sees its own version. Every tile is a secure click button:
+  <b>left-click</b> casts on the next person who needs it (group/greater version when it's worth it), <b>right-click</b> casts the single-target version, and
+  <b>hovering</b> opens the player list. The coloured underline is the status. The badge counts players missing it. The number is the shortest time left.
+  The <b>Smart Buff</b> button (bindable to one key) works through everything you owe, most urgent first.</p>
+
+  <div class="scene">
+    <!-- PALADIN -->
+    <div class="hud" style="left:24px;top:170px">
+      <div class="hh"><i class="dot"></i><b>Paladin</b>· blessings <span class="r">Groups 1-8 · 3 paladins</span></div>
+      <div class="row">
+        <div class="col"><div class="ic" title="Devotion Aura"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_devotionaura.jpg"></div><div class="st"></div></div><div class="lbl" style="color:var(--muted)">Aura</div></div>
+        <div class="col"><div class="ic bad"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealoffury.jpg"></div><div class="st"></div></div><div class="lbl" style="color:var(--muted)">Fury</div></div>
+        <div class="col"><div class="ic warn"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofsalvation.jpg"></div><div class="t">3:41</div><div class="n warn">4</div><div class="st"></div></div><div class="lbl" style="color:var(--muted)">Salv</div></div>
+        <div class="sep"></div>
+        <div class="col" style="position:relative">
+          <div class="flyout">
+            <div class="fh" style="color:#c79c6e">Warriors <span>Kings · 5</span></div>
+            <div class="pl"><div class="ic xs"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magic_magearmor.jpg"></div></div><span class="nm">Thorgrim</span><div class="bar"><i style="width:86%"></i></div><span class="tm">51:20</span></div>
+            <div class="pl"><div class="ic xs"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magic_magearmor.jpg"></div></div><span class="nm">Brakka</span><div class="bar"><i style="width:80%"></i></div><span class="tm">48:02</span></div>
+            <div class="pl"><div class="ic xs bad"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magic_magearmor.jpg"></div></div><span class="nm">Valeria Stormwind</span><div class="bar"><i style="width:0"></i></div><span class="tm" style="color:var(--bad)">MISSING</span></div>
+            <div class="pl"><div class="ic xs"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofwisdom.jpg"></div></div><span class="nm">Hollis <span style="color:var(--faint)">(override)</span></span><div class="bar"><i style="width:30%;background:var(--warn)"></i></div><span class="tm" style="color:var(--warn)">4:12</span></div>
+            <div class="pl" style="opacity:.45"><div class="ic xs oor"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magic_magearmor.jpg"></div></div><span class="nm">Kaz</span><span class="tm" style="font-size:11px">OUT OF RANGE</span></div>
+          </div>
+          <div class="ic bad"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_warrior.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magic_magearmor.jpg"></div><div class="t">0:00</div><div class="n">1</div><div class="st"></div></div>
+          <div class="lbl" style="color:#c79c6e">War</div>
+        </div>
+        <div class="col"><div class="ic"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_rogue.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_fistofjustice.jpg"></div><div class="t">44m</div><div class="st"></div></div><div class="lbl" style="color:#fff569">Rog</div></div>
+        <div class="col"><div class="ic"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_priest.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofwisdom.jpg"></div><div class="t">52m</div><div class="st"></div></div><div class="lbl" style="color:#fff">Pri</div></div>
+        <div class="col"><div class="ic warn"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_mage.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofwisdom.jpg"></div><div class="t">3:58</div><div class="n warn">3</div><div class="st"></div></div><div class="lbl" style="color:#69ccf0">Mag</div></div>
+        <div class="col"><div class="ic"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_warlock.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofwisdom.jpg"></div><div class="t">39m</div><div class="st"></div></div><div class="lbl" style="color:#9482c9">Lck</div></div>
+        <div class="col"><div class="ic oor"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_hunter.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_fistofjustice.jpg"></div><div class="n">2</div><div class="st"></div></div><div class="lbl" style="color:#abd473">Hun</div></div>
+        <div class="col"><div class="ic"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_druid.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofwisdom.jpg"></div><div class="t">57m</div><div class="st"></div></div><div class="lbl" style="color:#ff7d0a">Dru</div></div>
+        <div class="col"><div class="ic"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofwisdom.jpg"></div><div class="t">41m</div><div class="st"></div></div><div class="lbl" style="color:#0070de">Sha</div></div>
+        <div class="col"><div class="ic"><div class="cls"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_paladin.jpg"></div></div><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magic_magearmor.jpg"></div><div class="t">49m</div><div class="st"></div></div><div class="lbl" style="color:#f58cba">Pal</div></div>
+      </div>
+      <div style="margin-top:12px" class="smart">
+        <div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magic_greaterblessingofkings.jpg"></div></div>
+        <div><div class="a">Greater Blessing of Kings → Warriors</div><div class="b">1 missing · 7 more queued</div></div>
+        <span class="k" style="margin-left:auto">F</span>
+      </div>
+    </div>
+
+    <!-- PRIEST -->
+    <div class="hud" style="right:24px;top:24px">
+      <div class="hh"><i class="dot"></i><b>Priest</b>· group buffs <span class="r">You: G1–4</span></div>
+      <div class="brow"><span class="bn">Fortitude</span>
+        <div class="ic sm bad"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_prayeroffortitude.jpg"></div><div class="n">2</div><div class="st"></div></div>
+        <div class="grp"><div class="gp mine">1</div><div class="gp mine bad">2</div><div class="gp mine">3</div><div class="gp mine warn">4</div><div class="gp na">5</div><div class="gp na">6</div><div class="gp na">7</div><div class="gp na">8</div></div></div>
+      <div class="brow"><span class="bn">Spirit</span>
+        <div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_prayerofspirit.jpg"></div><div class="st"></div></div>
+        <div class="grp"><div class="gp mine">1</div><div class="gp mine">2</div><div class="gp mine">3</div><div class="gp mine">4</div><div class="gp mine">5</div><div class="gp mine">6</div><div class="gp mine">7</div><div class="gp mine">8</div></div></div>
+      <div class="brow"><span class="bn">Shadow</span>
+        <div class="ic sm off"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_prayerofshadowprotection.jpg"></div></div>
+        <div class="grp"><div class="gp na">1</div><div class="gp na">2</div><div class="gp na">3</div><div class="gp na">4</div><div class="gp na">5</div><div class="gp na">6</div><div class="gp na">7</div><div class="gp na">8</div></div></div>
+      <div class="brow" style="margin:12px 0 0"><span class="bn">Self</span>
+        <div class="ic sm warn"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_innerfire.jpg"></div><div class="t">1:12</div><div class="st"></div></div>
+        <div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg"></div><div class="st" style="background:#2a2e36"></div></div>
+        <span style="color:var(--faint);font-size:11px;margin-left:4px">Tank: <span style="color:#c79c6e">Thorgrim</span> (Shield on CD 0:04)</span>
+      </div>
+    </div>
+
+    <!-- MAGE compact & SELF strip -->
+    <div class="hud" style="left:24px;bottom:28px">
+      <div class="hh"><i class="dot"></i><b>Mage</b>· compact style</div>
+      <div class="row" style="gap:8px">
+        <div class="ic lg bad"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_arcaneintellect.jpg"></div><div class="t">G3</div><div class="n">5</div><div class="st"></div></div>
+        <div class="ic lg"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_flashheal.jpg"></div><div class="t">22m</div><div class="st"></div></div>
+        <div class="ic lg"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magearmor.jpg"></div><div class="t">24m</div><div class="st"></div></div>
+      </div>
+    </div>
+
+    <div class="hud" style="left:330px;bottom:28px">
+      <div class="hh"><i class="dot"></i>Self-buff strip · <b>any class</b></div>
+      <div class="row" style="gap:8px">
+        <div class="ic warn"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/ability_warrior_battleshout.jpg"></div><div class="t">0:31</div><div class="st"></div></div>
+        <div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_lightningshield.jpg"></div><div class="t">8m</div><div class="st"></div></div>
+        <div class="ic bad"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_cyclone.jpg"></div><div class="st"></div></div>
+        <div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_ravenform.jpg"></div><div class="st"></div></div>
+        <div class="ic bad"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_food_14.jpg"></div><div class="st"></div></div>
+      </div>
+      <div class="hint">Examples: Battle Shout · Lightning Shield · Windfury Weapon (missing) · Aspect · Well Fed</div>
+    </div>
+
+    <div class="hud" style="right:24px;bottom:28px;width:300px">
+      <div class="hh"><i class="dot"></i><b>Smart Buff</b>· minimal mode</div>
+      <div class="smart">
+        <div class="ic lg"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_prayeroffortitude.jpg"></div><div class="n">2</div></div>
+        <div><div class="a">Prayer of Fortitude → Group 2</div><div class="b">Next: Inner Fire · Group 4 expiring</div></div>
+        <span class="k" style="margin-left:auto">F</span>
+      </div>
+      <div class="hint">Want no bars at all? Use only this button + one keybind.</div>
+    </div>
+    <div class="tag">FAKE GAME VIEW · each bar is movable, scalable and can be switched on/off</div>
+  </div>
+
+  <div style="margin-top:14px" class="legend">
+    <div><div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_wordfortitude.jpg"></div><div class="st"></div></div> Everyone buffed</div>
+    <div><div class="ic sm warn"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_wordfortitude.jpg"></div><div class="st"></div></div> Expiring (&lt; 5 min, configurable)</div>
+    <div><div class="ic sm bad"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_wordfortitude.jpg"></div><div class="n">3</div><div class="st"></div></div> Missing (badge = how many)</div>
+    <div><div class="ic sm oor"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_wordfortitude.jpg"></div><div class="st"></div></div> Needed but out of range</div>
+    <div><div class="ic sm unk"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_wordfortitude.jpg"></div><div class="st"></div></div> Unknown (auras hidden in combat; last known state kept)</div>
+  </div>
+</section>
+
+<!-- =============================================================== WINDOW -->
+<section>
+  <h2>2 · Main window <span style="color:var(--faint);font-size:14px">(/rp)</span></h2>
+  <p class="note">This is where buffs get split between players. Changes sync to everyone in the group running RaidPower. The raid leader and assists
+  can edit every row; other players can edit only their own (and anyone who turns on "Free assignment"). Click the sidebar items and matrix cells to try it.</p>
+
+  <div class="win">
+    <div class="tb">
+      <div class="logo">R</div><div class="ttl">RAID<b>POWER</b></div><div class="ctx">· Molten Core · 38/40 · you are <span style="color:#f58cba">Paladin</span> (assist)</div>
+      <div class="x"><span title="Lock" style="font:700 11px var(--hdr)">LOCK</span><span title="Minimise">—</span><span title="Close">✕</span></div>
+    </div>
+    <div class="nav">
+      <div class="sec">Raid</div>
+      <a data-p="ov" class="on"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_prayerofhealing02.jpg"></div></div>Overview<span class="badge">9</span></a>
+      <a data-p="as"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_greaterblessingofkings.jpg"></div></div>Assignments</a>
+      <div class="sec">You</div>
+      <a data-p="me"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_innerfire.jpg"></div></div>My Buffs</a>
+      <div class="sec">Setup</div>
+      <a data-p="st"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg"></div></div>Appearance</a>
+      <a data-p="pr"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_04.jpg"></div></div>Presets</a>
+    </div>
+
+    <div class="main">
+      <!-- OVERVIEW -->
+      <div class="page on" id="p-ov">
+        <div class="ph"><h3>Raid overview</h3><div class="grow"></div>
+          <div class="seg"><span class="on">By group</span><span>By class</span><span>Missing only</span></div>
+          <button class="btn">Report missing</button></div>
+        <div class="sum">
+          <div class="s"><div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_wordfortitude.jpg"></div></div><div style="flex:1"><div class="v">36<span style="color:var(--faint);font-size:13px">/38</span></div><div class="meter"><i style="width:95%"></i></div></div></div>
+          <div class="s"><div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_magicalsentry.jpg"></div></div><div style="flex:1"><div class="v">19<span style="color:var(--faint);font-size:13px">/24</span></div><div class="meter"><i style="width:79%;background:var(--warn)"></i></div></div></div>
+          <div class="s"><div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_regeneration.jpg"></div></div><div style="flex:1"><div class="v">38<span style="color:var(--faint);font-size:13px">/38</span></div><div class="meter"><i style="width:100%"></i></div></div></div>
+          <div class="s"><div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_divinespirit.jpg"></div></div><div style="flex:1"><div class="v">24<span style="color:var(--faint);font-size:13px">/24</span></div><div class="meter"><i style="width:100%"></i></div></div></div>
+          <div class="s"><div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_magic_magearmor.jpg"></div></div><div style="flex:1"><div class="v">37<span style="color:var(--faint);font-size:13px">/38</span></div><div class="meter"><i style="width:97%"></i></div></div></div>
+          <div class="s"><div class="ic sm"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofsalvation.jpg"></div></div><div style="flex:1"><div class="v">30<span style="color:var(--faint);font-size:13px">/34</span></div><div class="meter"><i style="width:88%;background:var(--warn)"></i></div></div></div>
+        </div>
+        <div class="cardgrid" id="groups"></div>
+        <div class="hint">Dot order: Fortitude · Intellect · Mark · Spirit · Blessing · Salvation. Dark dot = not needed (no Intellect for warriors, no Salvation for tanks).</div>
+      </div>
+
+      <!-- ASSIGNMENTS -->
+      <div class="page" id="p-as">
+        <div class="ph"><h3>Assignments</h3><div class="grow"></div>
+          <div class="seg" id="asTabs">
+            <span class="on" data-t="pal"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_paladin.jpg"></div></div>Paladin</span>
+            <span data-t="pri"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_priest.jpg"></div></div>Priest</span>
+            <span data-t="mag"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_mage.jpg"></div></div>Mage</span>
+            <span data-t="dru"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_druid.jpg"></div></div>Druid</span>
+            <span data-t="sha"><div class="ic"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg"></div></div>Shaman</span>
+          </div></div>
+        <div id="asBody"></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn pri">Auto-assign</button><button class="btn">Clear</button><button class="btn">Load preset</button><div class="grow" style="flex:1"></div>
+          <button class="btn">Announce to raid</button>
+        </div>
+        <div class="hint" id="asHint">Click a cell to cycle its blessing. Right-click a cell to set exceptions for individual players (for example, the tank gets Kings instead of Salvation).</div>
+      </div>
+
+      <!-- MY BUFFS -->
+      <div class="page" id="p-me">
+        <div class="ph"><h3>My buffs · <span style="color:#f58cba">Paladin</span></h3><div class="grow"></div><div class="seg"><span class="on">This character</span><span>All characters</span></div></div>
+        <div class="opt">
+          <div class="og"><h4>Group buffs I give</h4>
+            <div class="or">Blessings (from assignments)<div class="tog on"></div></div>
+            <div class="or">Salvation for non-tanks<div class="tog on"></div></div>
+            <div class="or">Prefer Greater Blessings when ≥ <b style="margin:0 4px">2</b> need it<div class="tog on"></div></div>
+            <div class="or">Wait until whole class is in range<div class="tog"></div></div>
+          </div>
+          <div class="og"><h4>Self buffs to track</h4>
+            <div class="or"><div class="ic sm" style="margin-right:8px"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_devotionaura.jpg"></div></div>Aura (assigned: Devotion)<div class="tog on"></div></div>
+            <div class="or"><div class="ic sm" style="margin-right:8px"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealoffury.jpg"></div></div>Righteous Fury <span class="d">&nbsp;· only when tanking</span><div class="tog on"></div></div>
+            <div class="or"><div class="ic sm" style="margin-right:8px"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_righteousnessaura.jpg"></div></div>Seal reminder in combat<div class="tog"></div></div>
+            <div class="or"><div class="ic sm" style="margin-right:8px"><div class="wrap"><img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_food_14.jpg"></div></div>Well Fed / Flask / Elixir<div class="tog"></div></div>
+          </div>
+        </div>
+        <div class="hint">Every class has its own preset list: Mage (Armor, Amplify/Dampen), Warlock (Armor, Soulstone, Unending Breath), Warrior (Battle Shout), Rogue (Poisons per weapon), Hunter (Aspect, Trueshot), Shaman (Shield, Imbue, Totems), Druid (Thorns on tank, Omen), Priest (Inner Fire, Fear Ward on tank).</div>
+      </div>
+
+      <!-- APPEARANCE -->
+      <div class="page" id="p-st">
+        <div class="ph"><h3>Appearance</h3><div class="grow"></div><button class="btn">Unlock bars</button></div>
+        <div class="opt">
+          <div class="og"><h4>Bar style</h4>
+            <div class="or">Layout<div style="margin-left:auto" class="seg"><span class="on">Full</span><span>Compact</span><span>Smart only</span></div></div>
+            <div class="or">Grow direction<div style="margin-left:auto" class="seg"><span class="on">→</span><span>←</span><span>↓</span><span>↑</span></div></div>
+            <div class="or">Icon size<div class="sl"><i></i><b></b></div></div>
+            <div class="or">Scale<div class="sl"><i style="width:40%"></i><b style="left:40%"></b></div></div>
+            <div class="or">Show class labels<div class="tog on"></div></div>
+          </div>
+          <div class="og"><h4>Visibility</h4>
+            <div class="or">Show when solo<div class="tog"></div></div>
+            <div class="or">Show in party<div class="tog on"></div></div>
+            <div class="or">Hide when everything is buffed<div class="tog"></div></div>
+            <div class="or">Fade out of combat after 10 s<div class="tog"></div></div>
+            <div class="or">Accent colour<div style="margin-left:auto;display:flex;gap:6px"><div class="sw on" style="background:#f5b942" data-c="#f5b942"></div><div class="sw" style="background:#0cd29f" data-c="#0cd29f"></div><div class="sw" style="background:#0091ed" data-c="#0091ed"></div><div class="sw" style="background:#a78bfa" data-c="#a78bfa"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRESETS -->
+      <div class="page" id="p-pr">
+        <div class="ph"><h3>Presets</h3><div class="grow"></div><button class="btn pri">Save current</button></div>
+        <table class="mx">
+          <tr><th class="l">Name</th><th>Buffers</th><th>Last used</th><th></th></tr>
+          <tr><td class="l"><b>MC – 3 pally</b></td><td>3 Pal · 4 Pri · 3 Mag · 2 Dru</td><td>Tuesday</td><td><button class="btn">Load</button></td></tr>
+          <tr><td class="l"><b>Onyxia</b></td><td>2 Pal · 3 Pri · 3 Mag · 1 Dru</td><td>Last week</td><td><button class="btn">Load</button></td></tr>
+          <tr><td class="l"><b>5-man default</b></td><td>Auto</td><td>—</td><td><button class="btn">Load</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="ft"><span>RaidPower 0.1.0 · mock-up</span><span class="sync"><i></i> Synced with 11 of 12 buffers</span><span>Last change: Aelwyn changed Kings → Warriors · 12 s ago</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>3 · Feedback I need</h2>
+  <p class="note">Let me know which parts you like, which you'd change, what's missing, and which accent colour you prefer. Two smaller decisions: the paladin bar can be a horizontal row (shown)
+  or the classic PallyPower vertical column, and the Smart Buff button can be part of each bar or float on its own.</p>
+</section>
+
+<script>
+const I=n=>`https://wow.zamimg.com/images/wow/icons/large/${n}.jpg`;
+const ic=(n,cls='',extra='')=>`<div class="ic ${cls}"><div class="wrap"><img src="${I(n)}"></div>${extra}</div>`;
+const CC={WARRIOR:'#c79c6e',ROGUE:'#fff569',PRIEST:'#ffffff',MAGE:'#69ccf0',WARLOCK:'#9482c9',HUNTER:'#abd473',DRUID:'#ff7d0a',SHAMAN:'#0070de',PALADIN:'#f58cba'};
+const SHORT={WARRIOR:'War',ROGUE:'Rog',PRIEST:'Pri',MAGE:'Mag',WARLOCK:'Lck',HUNTER:'Hun',DRUID:'Dru',SHAMAN:'Sha',PALADIN:'Pal'};
+const CLS=['WARRIOR','ROGUE','PRIEST','MAGE','WARLOCK','HUNTER','DRUID','SHAMAN','PALADIN'];
+// accent switch
+document.querySelectorAll('.sw').forEach(s=>s.onclick=()=>{const c=s.dataset.c;document.documentElement.style.setProperty('--accent',c);
+  const r=parseInt(c.slice(1,3),16),g=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16);
+  document.documentElement.style.setProperty('--accent-dim',`rgba(${r},${g},${b},.18)`);
+  document.querySelectorAll('.sw').forEach(x=>x.classList.toggle('on',x.dataset.c===c));});
+// nav
+document.querySelectorAll('.nav a').forEach(a=>a.onclick=()=>{document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('on'));a.classList.add('on');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.getElementById('p-'+a.dataset.p).classList.add('on');});
+// overview groups
+const names=[['Thorgrim','WARRIOR'],['Aelwyn','PALADIN'],['Mirelle','PRIEST'],['Kaz','HUNTER'],['Vex','ROGUE'],
+ ['Brakka','WARRIOR'],['Sylas','MAGE'],['Orrin','WARLOCK'],['Tilda','MAGE'],['Fenwick','DRUID'],
+ ['Hollis','WARRIOR'],['Junia','PRIEST'],['Raskin','ROGUE'],['Pell','SHAMAN'],['Quill','MAGE'],
+ ['Valeria','WARRIOR'],['Doran','PALADIN'],['Isolde','PRIEST'],['Marn','HUNTER'],['Nyx','WARLOCK'],
+ ['Corvin','ROGUE'],['Elsa','MAGE'],['Gath','WARRIOR'],['Ulma','DRUID'],['Wren','PRIEST'],
+ ['Bram','PALADIN'],['Cyra','MAGE'],['Dax','ROGUE'],['Eir','PRIEST'],['Fang','HUNTER'],
+ ['Grisk','WARLOCK'],['Hale','WARRIOR'],['Ivo','MAGE'],['Jace','ROGUE'],['Kell','DRUID'],
+ ['Lune','PRIEST'],['Moss','SHAMAN'],['Nim','MAGE']];
+const noInt=c=>c==='WARRIOR'||c==='ROGUE';
+const miss={6:[1],7:[1],8:[1],11:[0],15:[4],2:[5],16:[5],18:[1],21:[1]};
+const warn={12:[5],13:[1],17:[5]};
+let gh='';
+for(let g=0;g<8;g++){const m=names.slice(g*5,g*5+5);if(!m.length)break;let bad=0,rows='';
+ m.forEach(([n,c],i)=>{const idx=g*5+i;let d='';for(let k=0;k<6;k++){let cl='';
+   if((k===1||k===3)&&noInt(c))cl='x';else if(k===5&&(n==='Thorgrim'||n==='Brakka'))cl='x';
+   if(miss[idx]&&miss[idx].includes(k)){cl='m';bad++}else if(warn[idx]&&warn[idx].includes(k))cl='w';d+=`<i class="${cl}"></i>`;}
+   rows+=`<div class="mem"><span class="nm" style="color:${CC[c]}">${n}</span><span class="dots">${d}</span></div>`;});
+ gh+=`<div class="card"><div class="ch">Group ${g+1}<span class="${bad?'b':''}">${bad?bad+' missing':'✓'}</span></div>${rows}</div>`;}
+document.getElementById('groups').innerHTML=gh;
+// assignments
+const BL={might:'spell_holy_fistofjustice',wisdom:'spell_holy_sealofwisdom',kings:'spell_magic_magearmor',light:'spell_holy_prayerofhealing02',sanct:'spell_nature_lightningshield',none:'spell_holy_dizzy'};
+const BL_ORDER=['kings','might','wisdom','light','sanct','none'];
+const pal=[{n:'Aelwyn',you:true,sync:'',known:['kings','might','wisdom','light'],a:['kings','kings','kings','kings','kings','kings','kings','kings','kings'],aura:'spell_holy_devotionaura',salv:true},
+ {n:'Doran',sync:'',known:['might','wisdom','light','sanct'],a:['might','might','wisdom','wisdom','wisdom','might','wisdom','wisdom','wisdom'],aura:'spell_holy_auraoflight',salv:false},
+ {n:'Bram',sync:'old',known:['might','wisdom','light'],a:['light','light','light','light','light','light','light','light','light'],aura:'spell_shadow_sealofkings',salv:false}];
+function renderPal(){let h='<table class="mx"><tr><th class="l">Paladin</th>';
+ CLS.forEach(c=>h+=`<th>${ic('classicon_'+c.toLowerCase())}<span style="color:${CC[c]}">${SHORT[c]}</span></th>`);h+='<th>Aura</th><th>Salv</th></tr>';
+ pal.forEach((p,pi)=>{h+=`<tr><td class="l"><div class="who">${ic('classicon_paladin','sm')}<div><div class="nm" style="color:${CC.PALADIN}">${p.n}${p.you?' <span style="color:var(--faint)">(you)</span>':''}</div><div class="sub"><span class="sdot ${p.sync}"></span> ${p.sync==='old'?'v0.0.9 · outdated':'synced'} · ${p.known.length} known</div></div></div></td>`;
+  p.a.forEach((b,ci)=>h+=`<td>${ic(BL[b],'sm',``).replace('class="ic sm "','class="ic sm" data-p="'+pi+'" data-c="'+ci+'"')}</td>`);
+  h+=`<td>${ic(p.aura,'sm')}</td><td><div class="tog ${p.salv?'on':''}" style="margin:0 auto"></div></td></tr>`;});
+ h+='</table>';return h;}
+function renderGroups(cls,buffs){const people={PRIEST:['Mirelle','Junia','Isolde','Wren'],MAGE:['Sylas','Tilda','Quill'],DRUID:['Fenwick','Ulma','Kell'],SHAMAN:['Pell','Moss']}[cls];
+ let h=`<table class="mx"><tr><th class="l">${cls[0]+cls.slice(1).toLowerCase()}</th>`;for(let g=1;g<=8;g++)h+=`<th>Group ${g}</th>`;h+='</tr>';
+ people.forEach((p,pi)=>{h+=`<tr><td class="l"><div class="who">${ic('classicon_'+cls.toLowerCase(),'sm')}<div><div class="nm" style="color:${CC[cls]}">${p}</div><div class="sub"><span class="sdot"></span> synced</div></div></div></td>`;
+  for(let g=0;g<8;g++){const mine=Math.floor(g/(8/people.length))===pi;h+='<td><div class="chip3">';
+   buffs.forEach((b,bi)=>{const on=bi===0?mine:(bi===1?(pi===0):false);h+=ic(b,on?'':'off');});h+='</div></td>';}
+  h+='</tr>';});return h+'</table>';}
+const T={pal:()=>renderPal(),
+ pri:()=>renderGroups('PRIEST',['spell_holy_prayeroffortitude','spell_holy_prayerofspirit','spell_holy_prayerofshadowprotection']),
+ mag:()=>renderGroups('MAGE',['spell_holy_arcaneintellect']),
+ dru:()=>renderGroups('DRUID',['spell_nature_giftofthewild','spell_nature_thorns']),
+ sha:()=>renderGroups('SHAMAN',['spell_nature_earthbindtotem','spell_nature_windfury','spell_nature_manaregentotem'])};
+const HINT={pal:'Click a cell to cycle its blessing. Right-click a cell to set exceptions for individual players (for example, the tank gets Kings instead of Salvation).',
+ pri:'Each cell holds Fortitude · Spirit · Shadow Protection for that group. Lit = this priest covers it. Click to toggle.',
+ mag:'Arcane Brilliance per group. Auto-assign splits groups evenly between mages.',
+ dru:'Gift of the Wild per group, plus Thorns (normally only the tanks get it).',
+ sha:'Totems work per group: this sets which totems each shaman drops. RaidPower can see Strength of Earth / Mana Spring etc. on group members.'};
+function showAs(t){document.getElementById('asBody').innerHTML=T[t]();document.getElementById('asHint').textContent=HINT[t];
+ document.querySelectorAll('#asTabs span').forEach(s=>s.classList.toggle('on',s.dataset.t===t));
+ document.querySelectorAll('#asBody .chip3 .ic').forEach(e=>e.onclick=()=>e.classList.toggle('off'));
+ document.querySelectorAll('#asBody .tog').forEach(e=>e.onclick=()=>e.classList.toggle('on'));
+ document.querySelectorAll('#asBody td .ic[data-p]').forEach(e=>e.onclick=()=>{const p=pal[e.dataset.p],c=+e.dataset.c;
+   let i=BL_ORDER.indexOf(p.a[c]);do{i=(i+1)%BL_ORDER.length}while(BL_ORDER[i]!=='none'&&!p.known.includes(BL_ORDER[i]));p.a[c]=BL_ORDER[i];showAs('pal');});}
+document.querySelectorAll('#asTabs span').forEach(s=>s.onclick=()=>showAs(s.dataset.t));
+showAs('pal');
+document.querySelectorAll('.tog').forEach(e=>e.onclick=()=>e.classList.toggle('on'));
+document.querySelectorAll('.seg').forEach(sg=>{if(sg.id)return;sg.querySelectorAll('span').forEach(s=>s.onclick=()=>{sg.querySelectorAll('span').forEach(x=>x.classList.remove('on'));s.classList.add('on');});});
+</script>
+</body>
+</html>

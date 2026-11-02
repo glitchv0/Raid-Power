@@ -1,0 +1,7 @@
+<Bindings>
+    <Binding name="CLICK RaidPowerSmartButton:LeftButton" header="RAIDPOWER" category="ADDONS">
+    </Binding>
+    <Binding name="RAIDPOWER_TOGGLE" category="ADDONS">
+        RaidPower.ToggleWindow()
+    </Binding>
+</Bindings>

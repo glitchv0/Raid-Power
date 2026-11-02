@@ -1,0 +1,9 @@
+package-as: RaidPower
+
+ignore:
+  - docs
+  - README.md
+  - .github
+  - .gitignore
+  - .pkgmeta
+  - "*.zip"

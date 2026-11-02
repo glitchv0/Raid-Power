@@ -1,0 +1,37 @@
+## Interface: 16001
+## Title: |cfff5b942Raid|rPower
+## Notes: Universal raid buff manager: assign, track and cast every class's group buffs and self-buffs. Syncs assignments between buffers.
+## Author: GlitchV0
+## Version: @project-version@
+## IconTexture: Interface\AddOns\RaidPower\Media\Logo.tga
+## SavedVariables: RaidPowerDB
+## SavedVariablesPerCharacter: RaidPowerCharDB
+## AddonCompartmentFunc: RaidPower_OnCompartmentClick
+## AddonCompartmentFuncOnEnter: RaidPower_OnCompartmentEnter
+## AddonCompartmentFuncOnLeave: RaidPower_OnCompartmentLeave
+## X-Category: Buffs
+## X-Website: https://github.com/glitchv0/Raid-Power
+
+Core\Init.lua
+Core\Data.lua
+Core\Spells.lua
+Core\DB.lua
+Core\Roster.lua
+Core\Auras.lua
+Core\Assign.lua
+Core\Planner.lua
+Core\Sync.lua
+
+UI\Style.lua
+UI\Widgets.lua
+UI\Tile.lua
+UI\Bars.lua
+UI\Window.lua
+UI\PageOverview.lua
+UI\PageAssign.lua
+UI\PageMyBuffs.lua
+UI\PageAppearance.lua
+UI\PagePresets.lua
+UI\Menus.lua
+
+Core\Main.lua

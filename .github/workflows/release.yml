@@ -1,0 +1,134 @@
+name: Release
+
+# Every push to main cuts a release:
+#   - next version from the last tag + commit messages (BREAKING -> major, feat -> minor, else patch)
+#   - BigWigsMods/packager builds RaidPower-<version>.zip (TOC @project-version@ filled in)
+#   - GitHub release with the zip and a changelog
+#   - CurseForge upload when the CF_API_TOKEN secret and CURSEFORGE_PROJECT_ID variable are set
+#   - Wago upload when the WAGO_API_TOKEN secret and WAGO_PROJECT_ID variable are set
+# Pull requests only build a test zip (no tag, no upload) and attach it as a workflow artifact.
+# Put [skip release] in a commit message to push to main without releasing.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump"
+        type: choice
+        options: [auto, patch, minor, major]
+        default: auto
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lua syntax check
+        run: |
+          sudo apt-get install -y -qq lua5.1 >/dev/null
+          find . -name '*.lua' -not -path './.release/*' -print0 | xargs -0 -n1 luac5.1 -p
+
+      - name: Package (no upload)
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -d
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RaidPower-test-build
+          path: .release/RaidPower/
+
+  release:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip release]'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lua syntax check
+        run: |
+          sudo apt-get install -y -qq lua5.1 >/dev/null
+          find . -name '*.lua' -not -path './.release/*' -print0 | xargs -0 -n1 luac5.1 -p
+
+      - name: Next version
+        id: version
+        env:
+          BUMP: ${{ github.event.inputs.bump || 'auto' }}
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            NEXT="0.2.0"
+            echo "No previous tag, first release $NEXT"
+          else
+            IFS='.' read -r MAJOR MINOR PATCH <<< "${LAST_TAG#v}"
+            PATCH=${PATCH%%-*}
+            LOG=$(git log "$LAST_TAG"..HEAD --format='%s%n%b')
+            if [ -z "$(git log "$LAST_TAG"..HEAD --oneline)" ]; then
+              echo "No commits since $LAST_TAG, nothing to release"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            KIND="$BUMP"
+            if [ "$KIND" = "auto" ]; then
+              if echo "$LOG" | grep -qE 'BREAKING|^[a-z]+(\(.+\))?!:'; then KIND=major
+              elif echo "$LOG" | grep -qiE '^feat'; then KIND=minor
+              else KIND=patch; fi
+            fi
+            case "$KIND" in
+              major) NEXT="$((MAJOR + 1)).0.0" ;;
+              minor) NEXT="$MAJOR.$((MINOR + 1)).0" ;;
+              *)     NEXT="$MAJOR.$MINOR.$((PATCH + 1))" ;;
+            esac
+            echo "Last $LAST_TAG, bump $KIND -> $NEXT"
+          fi
+          echo "version=$NEXT" >> "$GITHUB_OUTPUT"
+          echo "tag=v$NEXT" >> "$GITHUB_OUTPUT"
+
+      - name: Tag
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.tag }}" -m "RaidPower ${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Package and publish
+        if: steps.version.outputs.skip != 'true'
+        uses: BigWigsMods/packager@v2
+        with:
+          # -p / -a only when the project IDs are configured as repository variables.
+          args: >-
+            ${{ vars.CURSEFORGE_PROJECT_ID && format('-p {0}', vars.CURSEFORGE_PROJECT_ID) || '' }}
+            ${{ vars.WAGO_PROJECT_ID && format('-a {0}', vars.WAGO_PROJECT_ID) || '' }}
+        env:
+          GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+
+      - name: Summary
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          {
+            echo "### RaidPower ${{ steps.version.outputs.tag }}"
+            echo "- GitHub release: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag }}"
+            if [ -n "${{ vars.CURSEFORGE_PROJECT_ID }}" ]; then echo "- CurseForge: project ${{ vars.CURSEFORGE_PROJECT_ID }}"; else echo "- CurseForge: not configured (set CURSEFORGE_PROJECT_ID variable + CF_API_TOKEN secret)"; fi
+            if [ -n "${{ vars.WAGO_PROJECT_ID }}" ]; then echo "- Wago: project ${{ vars.WAGO_PROJECT_ID }}"; else echo "- Wago: not configured"; fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -201,11 +201,11 @@ local function RowInfo(r, b)
     local me = RP.PlayerName()
     RP.SetClassIcon(r.cls, b.m.class)
     local c = RP.CLASS_COLORS[b.m.class]
-    r.name:SetText(b.who .. (b.who == me and " |cff555b66(you)|r" or ""))
+    r.name:SetText(b.who)
     r.name:SetTextColor(c[1], c[2], c[3])
     local status, color
     if b.who == me then
-        status, color = (b.plan and b.plan.auto) and "auto split" or "manual", St.OK
+        status, color = "you · " .. ((b.plan and b.plan.auto) and "auto split" or "manual"), St.OK
     elseif b.plan then
         status, color = "synced · v" .. (RP.versions[b.who] or "?"), St.OK
         if b.plan.auto then status = status .. " · auto" end

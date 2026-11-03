@@ -11,7 +11,7 @@ St.FONT_BODY = RP.MEDIA .. "Fonts\\Barlow-Medium.ttf"
 St.WHITE = "Interface\\Buttons\\WHITE8X8"
 St.LOGO = RP.MEDIA .. "Logo.tga"
 
-St.BG = { 0.063, 0.071, 0.090, 0.98 }
+St.BG = { 0.063, 0.071, 0.090, 1 }
 St.BG_HUD = { 0.039, 0.043, 0.055, 0.86 }
 St.PANEL2 = { 0.082, 0.094, 0.118, 1 }
 St.LINE = { 1, 1, 1, 0.06 }

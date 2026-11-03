@@ -11,6 +11,7 @@
 ## AddonCompartmentFuncOnLeave: RaidPower_OnCompartmentLeave
 ## X-Category: Buffs
 ## X-Website: https://github.com/glitchv0/Raid-Power
+## X-Curse-Project-ID: 1780799
 
 Core\Init.lua
 Core\Data.lua

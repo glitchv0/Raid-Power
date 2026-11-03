@@ -16,7 +16,7 @@ RP.FAMILIES = {
     { key = "spirit", class = "PRIEST", scope = "group", code = "s", label = "Spirit",
         single = { 14752, 14818, 14819, 27841 }, group = { 27681 }, reagents = { 17029 },
         skip = { WARRIOR = true, ROGUE = true } },
-    { key = "shadow", class = "PRIEST", scope = "group", code = "p", label = "Shadow Prot.", optional = true,
+    { key = "shadow", class = "PRIEST", scope = "group", code = "p", label = "Shadow", optional = true,
         single = { 976, 10957, 10958 }, group = { 27683 }, reagents = { 17029 } },
     { key = "int", class = "MAGE", scope = "group", code = "i", label = "Intellect",
         single = { 1459, 1460, 1461, 10156, 10157 }, group = { 23028 }, reagents = { 17020 },

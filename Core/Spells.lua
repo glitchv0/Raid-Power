@@ -35,10 +35,22 @@ function RP.SpellName(id)
     return name or ("spell " .. id)
 end
 
+-- Icons by path for spells a client may not resolve yet (and the UI never shows a question mark for them).
+local ICON_FALLBACK = {
+    [1038] = "Interface\\Icons\\Spell_Holy_SealOfSalvation",
+    [25895] = "Interface\\Icons\\Spell_Holy_GreaterBlessingofSalvation",
+    [20911] = "Interface\\Icons\\Spell_Nature_LightningShield",
+    [25899] = "Interface\\Icons\\Spell_Holy_GreaterBlessingofSanctuary",
+    [976] = "Interface\\Icons\\Spell_Shadow_AntiShadow",
+    [27683] = "Interface\\Icons\\Spell_Holy_PrayerofShadowProtection",
+    [27681] = "Interface\\Icons\\Spell_Holy_PrayerofSpirit",
+    [14752] = "Interface\\Icons\\Spell_Holy_DivineSpirit",
+}
+
 function RP.SpellIcon(id)
     if not id then return QUESTION end
     local icon = C_Spell and C_Spell.GetSpellTexture and C_Spell.GetSpellTexture(id)
-    return icon or QUESTION
+    return icon or ICON_FALLBACK[id] or QUESTION
 end
 RP.QUESTION = QUESTION
 

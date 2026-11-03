@@ -44,7 +44,7 @@ local function Build(f)
     bars:SetPoint("TOPLEFT", 0, -36)
     bars:Add("Layout", nil, W.Segmented(bars, { { "full", "Full", "Every tile, group pills and labels" },
         { "compact", "Compact", "One icon per buff" }, { "smart", "Smart only", "Just the Smart Buff button" } },
-        Get("layout"), Set("layout"), 66))
+        Get("layout"), Set("layout"), 84))
     bars:Add("Icon size", nil, W.Slider(bars, 24, 48, 2, Get("iconSize"), Set("iconSize")))
     bars:Add("Scale", nil, W.Slider(bars, 0.6, 1.6, 0.05, Get("scale"), Set("scale"), function(v) return ("%.0f%%"):format(v * 100) end))
     bars:Add("Class labels", nil, W.Toggle(bars, Get("classLabels"), Set("classLabels")))
